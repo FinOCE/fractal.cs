@@ -51,7 +51,7 @@ namespace Fractal
         public static void SaveRenderToImage(ImageData ImageData)
         {
             string base64Data = Convert.ToBase64String(ImageData.ImageBuffer);
-            string img = string.Format("data:image/jpg;base64,{0}", base64Data);
+            string img = string.Format("data:image/png;base64,{0}", base64Data);
 
             File.WriteAllText($"output/Mandelbrot {{{ImageData.Iterations}}} [{ImageData.Width}x{ImageData.Height}] ({ImageData.X},{ImageData.Y}i) {ImageData.Zoom}x.png", img);
         }
