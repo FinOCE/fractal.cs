@@ -1,13 +1,12 @@
 using System;
+using System.Drawing;
 
 namespace Fractal
 {
     class Formula
     {
-        public static byte[] Mandelbrot(int iterations, (double, double) position, (int, int, int) color)
+        public static Color Mandelbrot(int iterations, (double, double) position, Color color)
         {
-            var (r, g, b) = color;
-
             var (i, j) = position;
             double real = i;
             double imag = j;
@@ -26,12 +25,11 @@ namespace Fractal
 
             double dis = (iterations - nt)/iterations;
 
-            return new byte[3]
-            {
-                (byte)(Math.Round(dis * r)),
-                (byte)(Math.Round(dis * g)),
-                (byte)(Math.Round(dis * b))
-            };
+            return Color.FromArgb(
+                (byte)(dis * color.R),
+                (byte)(dis * color.G),
+                (byte)(dis * color.B)
+            );
         }
     }
 }
