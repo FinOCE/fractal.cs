@@ -15,6 +15,32 @@ namespace Fractal
         Color Color {get; set;}
     }
 
+    class RenderProperties : IRenderProperties
+    {
+        public int Width {get; set;}
+        public int Height {get; set;}
+        public double X {get; set;}
+        public double Y {get; set;}
+        public int Zoom {get; set;}
+        public int Iterations {get; set;}
+        public Color Color {get; set;}
+
+        public RenderProperties((int, int) size, (double, double) position, int zoom, int iterations, Color color)
+        {
+            var (width, height) = size;
+            Width = width;
+            Height = height;
+
+            var (x, y) = position;
+            X = x;
+            Y = y;
+
+            Zoom = zoom;
+            Iterations = iterations;
+            Color = color;
+        }
+    }
+
     class Canvas
     {
         public int Width {get; set;}
@@ -61,9 +87,9 @@ namespace Fractal
             Image = image;
         }
 
-        public void SaveToFile(string location, ImageFormat type)
+        public void SaveToFile(string location)
         {
-            Image.Save(location, type);
+            Image.Save(location + $"/Mandelbrot {{{Iterations}}} [{Width}x{Height}] ({X},{Y}i) {Zoom}x.jpg", ImageFormat.Jpeg);
         }
     }
 }
