@@ -1,11 +1,9 @@
 using System;
-using Cudafy;
 
 namespace Fractal
 {
     class Formula
     {
-        [Cudafy]
         public static byte[] Mandelbrot(int iterations, (double, double) position, (int, int, int) color)
         {
             var (r, g, b) = color;
@@ -18,7 +16,7 @@ namespace Fractal
             while (nt > 0)
             {
                 double temp = Math.Pow(real, 2) - Math.Pow(imag, 2) + i;
-                imag = 2 * real * imag + j;
+                imag = (double)2 * real * imag + j;
                 real = temp;
 
                 nt--;

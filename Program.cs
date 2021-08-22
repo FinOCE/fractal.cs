@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
-using Cudafy;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Fractal
 {
@@ -9,8 +10,8 @@ namespace Fractal
         public static void Main(string[] args)
         {
             int iterations = 100;
-            int width = 8;
-            int height = 8;
+            int width = 256;
+            int height = 256;
             double x = -0.518d;
             double y = -0.5215d;
             int zoom = 1;
@@ -21,7 +22,6 @@ namespace Fractal
             SaveRenderToImage(ImageData);
         }
 
-        [Cudafy]
         public static ImageData Render(RenderData RenderData, Func<int, (double, double), (int, int, int), byte[]> callback)
         {
             byte[] imageBuffer = new byte[RenderData.Width * RenderData.Height * 4];
@@ -38,9 +38,9 @@ namespace Fractal
                 {
                     byte[] pixel = callback(RenderData.Iterations, (i, j), RenderData.Color);
                     imageBuffer[index] = 255;
-                    imageBuffer[index + 1] = pixel[0];
-                    imageBuffer[index + 2] = pixel[1];
-                    imageBuffer[index + 3] = pixel[2];
+                    imageBuffer[index+1] = pixel[0];
+                    imageBuffer[index+2] = pixel[1];
+                    imageBuffer[index+3] = pixel[2];
                     index += 4;
                 }
             }
@@ -50,10 +50,24 @@ namespace Fractal
 
         public static void SaveRenderToImage(ImageData ImageData)
         {
-            string base64Data = Convert.ToBase64String(ImageData.ImageBuffer);
-            string img = string.Format("data:image/png;base64,{0}", base64Data);
+            Bitmap image = new Bitmap(ImageData.Width, ImageData.Height, PixelFormat.Format32bppArgb);
 
-            File.WriteAllText($"output/Mandelbrot {{{ImageData.Iterations}}} [{ImageData.Width}x{ImageData.Height}] ({ImageData.X},{ImageData.Y}i) {ImageData.Zoom}x.png", img);
+            for (int i = 0; i < ImageData.ImageBuffer.Length; i += 4)
+            {
+                image.SetPixel(
+                    (i / 4) % ImageData.Width,
+                    (i / 4) / ImageData.Width,
+                    Color.FromArgb(
+                        ImageData.ImageBuffer[i],
+                        ImageData.ImageBuffer[i+1],
+                        ImageData.ImageBuffer[i+2],
+                        ImageData.ImageBuffer[i+3]
+                    )
+                );
+            }
+
+            string name = $"output/Mandelbrot {{{ImageData.Iterations}}} [{ImageData.Width}x{ImageData.Height}] ({ImageData.X},{ImageData.Y}i) {ImageData.Zoom}x.jpg";
+            image.Save(name, ImageFormat.Jpeg);
         }
     }
 }
